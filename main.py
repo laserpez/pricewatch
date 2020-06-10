@@ -32,7 +32,7 @@ def main(argv):
 def build_body(url, price, target):
     delta = price.amount - target
     body = f"Item at {url} price is still {price.amount}." if abs(delta) < 0.001 \
-      else f"Item at {url} price is now {price.amount} (difference: {delta:.2f})!"
+      else f"> Item at {url} price is now {price.amount} (difference: {delta:.2f})!"
     
     return body
 

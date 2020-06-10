@@ -1,4 +1,5 @@
 from price_parser import Price
+from re import match
 from urllib.parse import urlparse
 
 class ExtractNull():
@@ -12,14 +13,14 @@ class BaseExtractor:
 
     def __call__(self, url, soup):
         netloc = urlparse(url).netloc
-        return self.handle(url, soup) if netloc in self.domain() \
+        return self.handle(url, soup) if match(self.domain(), netloc) \
           else self._next(url, soup)
     
     def handle(self, url, price):
         raise NotImplementedError()
 
 class ExtractIsadore (BaseExtractor):
-    def domain(self): return {"isadore.com"}
+    def domain(self): return "(www.)?isadore.com"
     
     def handle(self, url, soup):
         price_p = soup.find_all('span', attrs={'class': 'price'})[0]
@@ -27,7 +28,7 @@ class ExtractIsadore (BaseExtractor):
         return price
 
 class ExtractLaPassione (BaseExtractor):
-    def domain(self): return {"www.lapassione.cc"}
+    def domain(self): return "(www.)?lapassione.cc"
 
     def handle(self, url, soup):
         price_p = soup.find("span", {"id": "ProductPrice"})
@@ -35,7 +36,7 @@ class ExtractLaPassione (BaseExtractor):
         return price
 
 class ExtractScienceInSport (BaseExtractor):
-    def domain(self): return {"www.scienceinsport.com"}
+    def domain(self): return "(www.)?scienceinsport.com"
 
     def handle(self, url, soup):
         pip = soup.find_all(attrs={'class': 'product-info-price'})[0]
@@ -44,7 +45,7 @@ class ExtractScienceInSport (BaseExtractor):
         return price
 
 class ExtractWiggle (BaseExtractor):
-    def domain(self): return {"www.wigglesport.it"}
+    def domain(self): return "(www.)?wigglesport.it"
     
     def handle(self, url, soup):
         price_p = soup.find_all('p', attrs={'class': 'bem-pricing__product-price'})[0]
